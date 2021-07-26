@@ -25,7 +25,7 @@ const dbinfo = {
   user: process.env.MYSQL_USER ?? "isucon",
   password: process.env.MYSQL_PASS ?? "isucon",
   database: process.env.MYSQL_DBNAME ?? "isuumo",
-  connectionLimit: 10,
+  connectionLimit: 151,
 };
 
 const app = express();
@@ -577,13 +577,10 @@ app.post("/api/chair", upload.single("chairs"), async (req, res, next) => {
   try {
     await beginTransaction();
     const csv = parse(req.file.buffer, { skip_empty_line: true });
-    for (var i = 0; i < csv.length; i++) {
-      const items = csv[i];
-      await query(
-        "INSERT INTO chair(id, name, description, thumbnail, price, height, width, depth, color, features, kind, popularity, stock) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        items
-      );
-    }
+    await query(
+        "INSERT INTO chair(id, name, description, thumbnail, price, height, width, depth, color, features, kind, popularity, stock) VALUES ?",
+	[csv]
+    );
     await commit();
     res.status(201);
     res.json({ ok: true });
