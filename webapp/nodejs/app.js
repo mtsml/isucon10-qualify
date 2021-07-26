@@ -480,8 +480,14 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
       ]
     );
 
-    const estatesInPolygon = [];
+    const results = {
+      estates: [],
+    };
+    let i = 0;
     for (const estate of estates) {
+      if (i >= NAZOTTE_LIMIT) {
+        break;
+      }
       const point = util.format(
         "'POINT(%f %f)'",
         estate.latitude,
@@ -500,21 +506,11 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
       const sqlstr = util.format(sql, coordinatesToText, point);
       const [e] = await query(sqlstr, [estate.id]);
       if (e && Object.keys(e).length > 0) {
-        estatesInPolygon.push(e);
+        results.estates.push(camelcaseKeys(e));
+        i++;
       }
     }
 
-    const results = {
-      estates: [],
-    };
-    let i = 0;
-    for (const estate of estatesInPolygon) {
-      if (i >= NAZOTTE_LIMIT) {
-        break;
-      }
-      results.estates.push(camelcaseKeys(estate));
-      i++;
-    }
     results.count = results.estates.length;
     res.json(results);
   } catch (e) {
