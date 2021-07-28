@@ -475,7 +475,7 @@ app.post("/api/estate/req_doc/:id", async (req, res, next) => {
 app.post("/api/estate/nazotte", async (req, res, next) => {
   const coordinates = req.body.coordinates;
   const coordinatesToText = util.format(
-    "'POLYGON((%s))'",
+    "POLYGON((%s))",
     coordinates
       .map((coordinate) =>
         util.format("%f %f", coordinate.latitude, coordinate.longitude)
