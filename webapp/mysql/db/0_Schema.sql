@@ -18,7 +18,8 @@ CREATE TABLE isuumo.estate
     door_width  INTEGER             NOT NULL,
     features    VARCHAR(64)         NOT NULL,
     popularity  INTEGER             NOT NULL,
-    popularity_desc INTEGER AS (-popularity) NOT NULL
+    popularity_desc INTEGER AS (-popularity) NOT NULL,
+    point POINT AS (POINT(latitude, longitude)) STORED NOT NULL
 );
 
 CREATE INDEX idx_estate_rent_id ON isuumo.estate(rent, id);
