@@ -28,6 +28,15 @@ const dbinfo = {
   connectionLimit: 151,
 };
 
+const estateDbinfo = {
+    host: process.env.MYSQL_HOST_ESTATE ?? "127.0.0.1",
+    port: process.env.MYSQL_PORT ?? 3306,
+    user: process.env.MYSQL_USER ?? "isucon",
+    password: process.env.MYSQL_PASS ?? "isucon",
+    database: process.env.MYSQL_DBNAME ?? "isuumo",
+    connectionLimit: 151,
+  };
+
 const botUserAgents = [
     /ISUCONbot(-Mobile)?/,
     /ISUCONbot-Image\//,
@@ -43,7 +52,9 @@ const botUserAgents = [
 
 const app = express();
 const db = mysql.createPool(dbinfo);
+const estateDb = mysql.createPool(estateDbinfo);
 app.set("db", db);
+app.set("estateDb", estateDb);
 
 app.use(function (req, res, next) {
     const userAgent = req.get('user-agent');
@@ -69,6 +80,11 @@ app.post("/initialize", async (req, res, next) => {
         `mysql -h ${dbinfo.host} -u ${dbinfo.user} -p${dbinfo.password} -P ${dbinfo.port} ${dbinfo.database} < ${execfile}`
       );
     }
+    for (const execfile of execfiles) {
+      await exec(
+        `mysql -h ${estateDbinfo.host} -u ${estateDbinfo.user} -p${estateDbinfo.password} -P ${estateDbinfo.port} ${estateDbinfo.database} < ${execfile}`
+      );
+    }
     res.json({
       language: "nodejs",
     });
@@ -78,7 +94,7 @@ app.post("/initialize", async (req, res, next) => {
 });
 
 app.get("/api/estate/low_priced", async (req, res, next) => {
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -424,7 +440,7 @@ app.get("/api/estate/search", async (req, res, next) => {
   const limitOffset = " ORDER BY popularity_desc, id ASC LIMIT ? OFFSET ?";
   const countprefix = "SELECT COUNT(*) as count FROM estate WHERE ";
 
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -454,7 +470,7 @@ app.get("/api/estate/search/condition", (req, res, next) => {
 
 app.post("/api/estate/req_doc/:id", async (req, res, next) => {
   const id = req.params.id;
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -482,7 +498,7 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
       )
       .join(",")
   );
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -507,7 +523,7 @@ app.post("/api/estate/nazotte", async (req, res, next) => {
 });
 
 app.get("/api/estate/:id", async (req, res, next) => {
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -528,7 +544,7 @@ app.get("/api/estate/:id", async (req, res, next) => {
 
 app.get("/api/recommended_estate/:id", async (req, res, next) => {
   const id = req.params.id;
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
   try {
@@ -575,7 +591,7 @@ app.post("/api/chair", upload.single("chairs"), async (req, res, next) => {
 });
 
 app.post("/api/estate", upload.single("estates"), async (req, res, next) => {
-  const getConnection = promisify(db.getConnection.bind(db));
+  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
   const connection = await getConnection();
   const beginTransaction = promisify(connection.beginTransaction.bind(connection));
   const query = promisify(connection.query.bind(connection));
