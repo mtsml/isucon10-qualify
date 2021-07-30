@@ -544,15 +544,18 @@ app.get("/api/estate/:id", async (req, res, next) => {
 
 app.get("/api/recommended_estate/:id", async (req, res, next) => {
   const id = req.params.id;
-  const getConnection = promisify(estateDb.getConnection.bind(estateDb));
+  const getConnection = promisify(db.getConnection.bind(db));
   const connection = await getConnection();
   const query = promisify(connection.query.bind(connection));
+  const estategetConnection = promisify(estateDb.getConnection.bind(estateDb));
+  const estateconnection = await estategetConnection();
+  const estatequery = promisify(estateconnection.query.bind(estateconnection));
   try {
     const [chair] = await query("SELECT * FROM chair WHERE id = ?", [id]);
     const w = chair.width;
     const h = chair.height;
     const d = chair.depth;
-    const es = await query(
+    const es = await estatequery(
       "SELECT * FROM estate where (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>= ?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) OR (door_width >= ? AND door_height>=?) ORDER BY popularity_desc, id ASC LIMIT ?",
       [w, h, w, d, h, w, h, d, d, w, d, h, LIMIT]
     );
