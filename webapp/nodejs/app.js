@@ -1,13 +1,11 @@
 "use strict";
 
 const express = require("express");
-const morgan = require("morgan");
 const multer = require("multer");
 const mysql = require("mysql");
 const path = require("path");
 const cp = require("child_process");
 const util = require("util");
-const os = require("os");
 const parse = require("csv-parse/lib/sync");
 const camelcaseKeys = require("camelcase-keys");
 const upload = multer();
@@ -64,7 +62,6 @@ app.use(function (req, res, next) {
       }
     next()
   })
-app.use(morgan("combined"));
 app.use(express.json());
 app.post("/initialize", async (req, res, next) => {
   try {
