@@ -15,23 +15,7 @@ CREATE TABLE isuumo.estate
     longitude   DOUBLE PRECISION    NOT NULL,
     rent        INTEGER             NOT NULL,
     door_height INTEGER             NOT NULL,
-    door_height_range SMALLINT AS (
-        CASE 
-            WHEN door_height < 80 THEN 1
-            WHEN door_height < 110 THEN 2
-            WHEN door_height < 150 THEN 3
-            ELSE 4
-        END
-    ) NOT NULL,
     door_width  INTEGER             NOT NULL,
-    door_width_range SMALLINT AS (
-        CASE 
-            WHEN door_width < 80 THEN 1
-            WHEN door_width < 110 THEN 2
-            WHEN door_width < 150 THEN 3
-            ELSE 4
-        END
-    ) NOT NULL,
     features    VARCHAR(64)         NOT NULL,
     popularity  INTEGER             NOT NULL,
     popularity_desc INTEGER AS (-popularity) NOT NULL,
@@ -53,32 +37,8 @@ CREATE TABLE isuumo.chair
     thumbnail   VARCHAR(128)    NOT NULL,
     price       INTEGER         NOT NULL,
     height      INTEGER         NOT NULL,
-    height_range SMALLINT AS (
-        CASE 
-            WHEN height < 80 THEN 1
-            WHEN height < 110 THEN 2
-            WHEN height < 150 THEN 3
-            ELSE 4
-        END
-    ) NOT NULL,
     width       INTEGER         NOT NULL,
-    width_range SMALLINT AS (
-        CASE 
-            WHEN width < 80 THEN 1
-            WHEN width < 110 THEN 2
-            WHEN width < 150 THEN 3
-            ELSE 4
-        END
-    ) NOT NULL,
     depth       INTEGER         NOT NULL,
-    depth_range SMALLINT AS (
-        CASE 
-            WHEN depth < 80 THEN 1
-            WHEN depth < 110 THEN 2
-            WHEN depth < 150 THEN 3
-            ELSE 4
-        END
-    ) NOT NULL,
     color       VARCHAR(64)     NOT NULL,
     features    VARCHAR(64)     NOT NULL,
     kind        VARCHAR(64)     NOT NULL,

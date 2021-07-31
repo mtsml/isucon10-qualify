@@ -163,18 +163,57 @@ app.get("/api/chair/search", async (req, res, next) => {
   }
 
   if (!!heightRangeId) {
-      searchQueries.push("height_range = ? ");
-      queryParams.push(heightRangeId);
+    const chairHeight = chairSearchCondition["height"].ranges[heightRangeId];
+    if (chairHeight == null) {
+      res.status(400).send("heightRangeId invalid");
+      return;
+    }
+
+    if (chairHeight.min !== -1) {
+      searchQueries.push("height >= ? ");
+      queryParams.push(chairHeight.min);
+    }
+
+    if (chairHeight.max !== -1) {
+      searchQueries.push("height < ? ");
+      queryParams.push(chairHeight.max);
+    }
   }
 
   if (!!widthRangeId) {
-    searchQueries.push("width_range = ? ");
-    queryParams.push(widthRangeId);
+    const chairWidth = chairSearchCondition["width"].ranges[widthRangeId];
+    if (chairWidth == null) {
+      res.status(400).send("widthRangeId invalid");
+      return;
+    }
+
+    if (chairWidth.min !== -1) {
+      searchQueries.push("width >= ? ");
+      queryParams.push(chairWidth.min);
+    }
+
+    if (chairWidth.max !== -1) {
+      searchQueries.push("width < ? ");
+      queryParams.push(chairWidth.max);
+    }
   }
 
   if (!!depthRangeId) {
-    searchQueries.push("depth_range = ? ");
-    queryParams.push(depthRangeId);
+    const chairDepth = chairSearchCondition["depth"].ranges[depthRangeId];
+    if (chairDepth == null) {
+      res.status(400).send("depthRangeId invalid");
+      return;
+    }
+
+    if (chairDepth.min !== -1) {
+      searchQueries.push("depth >= ? ");
+      queryParams.push(chairDepth.min);
+    }
+
+    if (chairDepth.max !== -1) {
+      searchQueries.push("depth < ? ");
+      queryParams.push(chairDepth.max);
+    }
   }
 
   if (!!kind) {
@@ -315,14 +354,42 @@ app.get("/api/estate/search", async (req, res, next) => {
   } = req.query;
 
   if (!!doorHeightRangeId) {
-    searchQueries.push("door_height_range = ? ");
-    queryParams.push(doorHeightRangeId);
-   }
+    const doorHeight =
+      estateSearchCondition["doorHeight"].ranges[doorHeightRangeId];
+    if (doorHeight == null) {
+      res.status(400).send("doorHeightRangeId invalid");
+      return;
+    }
 
-   if (!!doorWidthRangeId) {
-    searchQueries.push("door_width_range = ? ");
-    queryParams.push(doorWidthRangeId);
-   }
+    if (doorHeight.min !== -1) {
+      searchQueries.push("door_height >= ? ");
+      queryParams.push(doorHeight.min);
+    }
+
+    if (doorHeight.max !== -1) {
+      searchQueries.push("door_height < ? ");
+      queryParams.push(doorHeight.max);
+    }
+  }
+
+  if (!!doorWidthRangeId) {
+    const doorWidth =
+      estateSearchCondition["doorWidth"].ranges[doorWidthRangeId];
+    if (doorWidth == null) {
+      res.status(400).send("doorWidthRangeId invalid");
+      return;
+    }
+
+    if (doorWidth.min !== -1) {
+      searchQueries.push("door_width >= ? ");
+      queryParams.push(doorWidth.min);
+    }
+
+    if (doorWidth.max !== -1) {
+      searchQueries.push("door_width < ? ");
+      queryParams.push(doorWidth.max);
+    }
+  }
 
   if (!!rentRangeId) {
     const rent = estateSearchCondition["rent"].ranges[rentRangeId];
