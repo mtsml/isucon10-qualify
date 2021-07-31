@@ -24,8 +24,9 @@ CREATE TABLE isuumo.estate
 
 CREATE INDEX idx_estate_rent_id ON isuumo.estate(rent, id);
 CREATE INDEX idx_estate_popularity ON isuumo.estate(popularity_desc, id);
-CREATE INDEX idx_estate_door_height ON isuumo.estate(door_height);
-CREATE INDEX idx_estate_door_width ON isuumo.estate(door_width);
+CREATE INDEX idx_estate_door_height ON isuumo.estate(door_height, rent);
+CREATE INDEX idx_estate_door_width ON isuumo.estate(door_width, rent);
+CREATE INDEX idx_estate_door_height_weight ON isuumo.estate(door_height, door_width, rent);
 ALTER TABLE isuumo.estate ADD SPATIAL INDEX estate_point_idx(point);
 
 CREATE TABLE isuumo.chair
