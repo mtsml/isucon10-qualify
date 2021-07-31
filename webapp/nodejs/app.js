@@ -99,7 +99,7 @@ app.get("/api/estate/low_priced", async (req, res, next) => {
   const query = promisify(connection.query.bind(connection));
   try {
     const es = await query(
-      "SELECT * FROM estate ORDER BY rent ASC, id ASC LIMIT ?",
+      "SELECT * FROM estate WHERE rent < 30100 ORDER BY rent ASC, id ASC LIMIT ?",
       [LIMIT]
     );
     const estates = es.map((estate) => camelcaseKeys(estate));
